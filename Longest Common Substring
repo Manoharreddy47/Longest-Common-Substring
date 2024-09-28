@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+pair<string, int> longestCommonSubstring(const string &str1, const string &str2, vector<vector<int>> &lookup) {
+    int n = str1.size();
+    int m = str2.size();
+    
+    int maxLength = 0;
+    string longestSubstring = "";
+
+    // Build the lookup table
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                lookup[i][j] = lookup[i - 1][j - 1] + 1;
+                
+                // Update maximum length and substring
+                if (lookup[i][j] > maxLength) {
+                    maxLength = lookup[i][j];
+                    longestSubstring = str1.substr(i - maxLength, maxLength);
+                }
+            } else {
+                lookup[i][j] = 0; // No match, reset
+            }
+        }
+    }
+
+    return {longestSubstring, maxLength};
+}
+
+void printLookupTable(const vector<vector<int>> &lookup) {
+    for (const auto &row : lookup) {
+        for (const auto &val : row) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    string str1 = "ABAB";
+    string str2 = "BABA";
+
+    // Initialize the lookup table
+    vector<vector<int>> lookup(str1.size() + 1, vector<int>(str2.size() + 1, 0));
+
+    // Find the longest common substring
+    auto [longestSubstring, length] = longestCommonSubstring(str1, str2, lookup);
+    
+    // Print the lookup table after it has been filled
+    cout << "Lookup Table:" << endl;
+    printLookupTable(lookup);
+    
+    cout << "Longest Common Substring: " << longestSubstring << " (Length: " << length << ")" << endl;
+
+    return 0;
+}
